@@ -1,10 +1,10 @@
 const httpServer = require("http").createServer();
 const jwt = require("jsonwebtoken");
+const PORT = process.env.PORT || 3000;
 const io = require("socket.io")(httpServer, {
   cors: {
-    origin: "http://localhost:5173",
-    origin: "https://people.arcada.fi"
-  },
+  origin: ["http://localhost:5173", "https://people.arcada.fi"],
+},
 });
 
 // verification middleware
@@ -40,4 +40,4 @@ io.on("connection", (socket) => {
   socket.on('disconnect', () => clearTimeout(timer))
 });
 
-httpServer.listen(3000);
+httpServer.listen(PORT, "0.0.0.0", () => console.log(`Listening on ${PORT}`));
