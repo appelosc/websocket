@@ -3,6 +3,7 @@ const jwt = require("jsonwebtoken");
 const io = require("socket.io")(httpServer, {
   cors: {
     origin: "http://localhost:5173",
+    origin: "https://people.arcada.fi"
   },
 });
 
@@ -18,7 +19,7 @@ io.use((socket,next) =>{
         next();
     }catch(err){
         if(err.name === "TokenExpiredError"){
-            return next(new Error("Token expired"))
+            return next(new Error("TokenExpiredError"))
         }
         return next(new Error("Invalid token"))
     }
@@ -26,6 +27,7 @@ io.use((socket,next) =>{
 // simple sendback function. user joins room based on id so messages is only sent to users other devices
 // message server recieves is sent back to all other devices in the room
 io.on("connection", (socket) => {
+  const timer = setTimeout(()=>socket.disconnect(), socket.data.user.exp * 1000 - Date.now())
   console.log("connected")
   socket.emit("hello", "world");
 
@@ -35,6 +37,7 @@ io.on("connection", (socket) => {
   socket.on("message", (data) => {
     socket.to(room).emit("message", data);
   });
+  socket.on('disconnect', () => clearTimeout(timer))
 });
 
 httpServer.listen(3000);
