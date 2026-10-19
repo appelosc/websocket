@@ -3,7 +3,7 @@ const jwt = require("jsonwebtoken");
 const PORT = process.env.PORT || 3000;
 const io = require("socket.io")(httpServer, {
   cors: {
-  origin: ["http://localhost:5173", "https://people.arcada.fi"],
+  origin: ["https://people.arcada.fi"],
 },
 });
 
